@@ -30,6 +30,11 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!userInfo) {
+      setStatus({ type: 'error', message: 'Please login first to submit an inquiry.' });
+      return;
+    }
+
     setStatus({ type: 'loading', message: 'Sending message...' });
 
     try {
@@ -42,7 +47,7 @@ const Contact = () => {
       
       if (res.ok) {
         setStatus({ type: 'success', message: 'Thank you for your message. Our team will get back to you shortly.' });
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setFormData({ name: userInfo.name, email: userInfo.email, subject: '', message: '' });
       } else {
         setStatus({ type: 'error', message: 'Failed to send message. Please try again.' });
       }
@@ -121,17 +126,7 @@ const Contact = () => {
                 </div>
               )}
 
-              {!userInfo ? (
-                <div className="bg-bg-secondary p-8 rounded-sm text-center border border-border-light">
-                  <LockKey size={48} className="mx-auto text-text-secondary mb-4" />
-                  <h3 className="text-xl font-serif text-primary mb-2">Authentication Required</h3>
-                  <p className="text-text-secondary mb-6">Please log in to your account to send us an inquiry.</p>
-                  <Link to="/auth?redirect=/contact" className="inline-block bg-primary text-white py-3 px-8 rounded-sm font-medium transition-colors hover:bg-accent tracking-wider">
-                    Sign In to Continue
-                  </Link>
-                </div>
-              ) : (
-                <form className="space-y-5" onSubmit={handleSubmit}>
+              <form className="space-y-5" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label htmlFor="name" className="block text-sm text-text-secondary mb-1">Full Name</label>
@@ -199,7 +194,6 @@ const Contact = () => {
                   {status.type === 'loading' ? 'Sending...' : 'Send Message'}
                 </button>
               </form>
-              )}
             </div>
           </div>
         </div>
