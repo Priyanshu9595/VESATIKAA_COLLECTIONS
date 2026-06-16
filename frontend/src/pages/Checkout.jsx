@@ -44,7 +44,8 @@ const Checkout = () => {
 
     try {
       // 1. Create the Order in the DB first
-      const res = await fetch('/api/orders', {
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${API_URL}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -79,12 +80,13 @@ const Checkout = () => {
         }
 
         // 3. Fetch Razorpay Key
-        const keyRes = await fetch('/api/config/razorpay');
+        const API_URL = import.meta.env.VITE_API_URL || '';
+        const keyRes = await fetch(`${API_URL}/api/config/razorpay`);
         const keyText = await keyRes.text();
         const keyId = keyText.trim();
 
         // 4. Generate Razorpay Order
-        const rzpOrderRes = await fetch(`/api/orders/${orderData.id}/razorpay-order`, {
+        const rzpOrderRes = await fetch(`${API_URL}/api/orders/${orderData.id}/razorpay-order`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
@@ -105,7 +107,7 @@ const Checkout = () => {
           handler: async function (response) {
             // 6. Verify Payment
             try {
-              const verifyRes = await fetch(`/api/orders/${orderData.id}/pay`, {
+              const verifyRes = await fetch(`${API_URL}/api/orders/${orderData.id}/pay`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',

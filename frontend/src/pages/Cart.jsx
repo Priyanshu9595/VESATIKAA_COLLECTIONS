@@ -20,7 +20,7 @@ const loadRazorpayScript = () => {
 const Cart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
 
@@ -42,7 +42,8 @@ const Cart = () => {
 
     try {
       // 1. Create the Order in the DB first with a placeholder address since we're bypassing the checkout form
-      const res = await fetch('/api/orders', {
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${API_URL}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,12 +77,13 @@ const Cart = () => {
       }
 
       // 3. Fetch Razorpay Key
-      const keyRes = await fetch('/api/config/razorpay');
+      //const API_URL = import.meta.env.VITE_API_URL || '';
+      const keyRes = await fetch(`${API_URL}/api/config/razorpay`);
       const keyText = await keyRes.text();
       const keyId = keyText.trim();
 
       // 4. Generate Razorpay Order
-      const rzpOrderRes = await fetch(`/api/orders/${orderData.id}/razorpay-order`, {
+      const rzpOrderRes = await fetch(`${API_URL}/api/orders/${orderData.id}/razorpay-order`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${userInfo.token}` },
       });
@@ -102,7 +104,7 @@ const Cart = () => {
         handler: async function (response) {
           // 6. Verify Payment
           try {
-            const verifyRes = await fetch(`/api/orders/${orderData.id}/pay`, {
+            const verifyRes = await fetch(`${API_URL}/api/orders/${orderData.id}/pay`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -147,7 +149,7 @@ const Cart = () => {
   return (
     <div className="min-h-screen pt-24 pb-20 bg-bg-secondary animate-fade-in">
       <div className="container mx-auto px-4">
-        
+
         <h1 className="text-4xl font-serif text-primary mb-8 border-b border-border-light pb-4 flex items-center gap-3">
           <ShoppingBag size={36} /> Your Cart
         </h1>
@@ -163,13 +165,13 @@ const Cart = () => {
           </div>
         ) : (
           <div className="flex flex-col lg:flex-row gap-8">
-            
+
             {/* Cart Items */}
             <div className="lg:w-2/3 flex flex-col gap-4">
               {cartItems.map((item) => (
                 <div key={`${item.id}-${item.size}-${item.color}`} className="bg-white rounded-md shadow-sm border border-border-light p-4 flex flex-col sm:flex-row gap-6 items-center relative pr-12">
                   <img src={item.image} alt={item.name} className="w-24 h-32 object-cover rounded-sm" />
-                  
+
                   <div className="flex-1 text-center sm:text-left">
                     <Link to={`/product/${item.id}`} className="text-xl font-serif text-primary hover:text-accent transition-colors block mb-1">
                       {item.name}
@@ -184,15 +186,15 @@ const Cart = () => {
                   <div className="flex items-center gap-4">
                     {/* Quantity Selector */}
                     <div className="flex items-center border border-border-light rounded-sm h-10 w-28">
-                      <button 
+                      <button
                         className="w-8 flex items-center justify-center text-text-secondary hover:text-primary transition-colors disabled:opacity-50"
                         onClick={() => addToCartHandler(item, item.qty - 1)}
                         disabled={item.qty <= 1}
                       >
                         -
                       </button>
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         min="1"
                         max={item.countInStock}
                         className="w-12 text-center border-x border-border-light h-full focus:outline-none bg-transparent appearance-none"
@@ -200,9 +202,9 @@ const Cart = () => {
                         onChange={(e) => {
                           const val = e.target.value;
                           if (val === '') {
-                             // Allow it to be temporarily empty while typing, but default to 1 in the handler to prevent NaN errors
-                             addToCartHandler(item, val);
-                             return;
+                            // Allow it to be temporarily empty while typing, but default to 1 in the handler to prevent NaN errors
+                            addToCartHandler(item, val);
+                            return;
                           }
                           const num = parseInt(val);
                           if (!isNaN(num) && num > 0) {
@@ -215,7 +217,7 @@ const Cart = () => {
                           }
                         }}
                       />
-                      <button 
+                      <button
                         className="w-8 flex items-center justify-center text-text-secondary hover:text-primary transition-colors disabled:opacity-50"
                         onClick={() => addToCartHandler(item, item.qty + 1)}
                         disabled={item.countInStock <= item.qty}
@@ -223,14 +225,14 @@ const Cart = () => {
                         +
                       </button>
                     </div>
-                    
+
                     <p className="font-medium text-primary w-20 text-right hidden sm:block">
                       ${(item.price * item.qty).toFixed(2)}
                     </p>
                   </div>
 
                   {/* Remove Button */}
-                  <button 
+                  <button
                     onClick={() => removeFromCartHandler(item.id, item.size, item.color)}
                     className="absolute right-4 top-4 sm:top-1/2 sm:-translate-y-1/2 text-text-secondary hover:text-red-500 transition-colors p-2"
                     title="Remove item"
@@ -245,7 +247,7 @@ const Cart = () => {
             <div className="lg:w-1/3">
               <div className="bg-white rounded-md shadow-sm border border-border-light p-6 sticky top-28">
                 <h2 className="text-2xl font-serif text-primary mb-6">Order Summary</h2>
-                
+
                 <div className="space-y-4 mb-6 text-sm text-text-secondary border-b border-border-light pb-6">
                   <div className="flex justify-between">
                     <span>Subtotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)} items)</span>
@@ -266,15 +268,15 @@ const Cart = () => {
                   <span className="text-3xl font-serif text-accent">${cart.totalPrice}</span>
                 </div>
 
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   disabled={cartItems.length === 0}
                   onClick={checkoutHandler}
                   className="w-full bg-primary text-white py-4 rounded-sm font-medium transition-colors hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider mb-4"
                 >
                   BUY NOW
                 </button>
-                
+
                 <p className="text-xs text-center text-text-secondary">
                   Taxes and shipping calculated at checkout.
                 </p>

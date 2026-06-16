@@ -32,17 +32,9 @@ app.get('/api/config/razorpay', (req, res) => res.send(process.env.RAZORPAY_KEY_
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
-  app.get(/(.*)/, (req, res) =>
-    res.sendFile(path.resolve(__dirname, '../frontend', 'dist', 'index.html'))
-  );
-} else {
-  app.get('/', (req, res) => {
-    res.send('Fashion Boutique API is running...');
-  });
-}
+app.get('/', (req, res) => {
+  res.send('Fashion Boutique API is running...');
+});
 
 // Database connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/fashion-boutique';

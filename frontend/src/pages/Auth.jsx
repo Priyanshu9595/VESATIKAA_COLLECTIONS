@@ -45,7 +45,8 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const url = isLogin ? '/api/users/login' : '/api/users';
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      const url = isLogin ? `${API_URL}/api/users/login` : `${API_URL}/api/users`;
       const body = isLogin 
         ? { email: formData.email, password: formData.password }
         : { name: formData.name, email: formData.email, password: formData.password, isAdmin: isAdminParam };

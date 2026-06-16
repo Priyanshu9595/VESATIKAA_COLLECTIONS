@@ -9,7 +9,8 @@ export const ProductProvider = ({ children }) => {
   // Fetch products from backend
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api/products');
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${API_URL}/api/products`);
       if (response.ok) {
         const data = await response.json();
         setProducts(data);
@@ -29,7 +30,8 @@ export const ProductProvider = ({ children }) => {
 
   const addProduct = async (product) => {
     try {
-      const response = await fetch('/api/products', {
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${API_URL}/api/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(product),
@@ -45,7 +47,8 @@ export const ProductProvider = ({ children }) => {
 
   const updateProduct = async (updatedProduct) => {
     try {
-      const response = await fetch(`/api/products/${updatedProduct.id}`, {
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${API_URL}/api/products/${updatedProduct.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedProduct),
@@ -61,7 +64,8 @@ export const ProductProvider = ({ children }) => {
 
   const deleteProduct = async (id) => {
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${API_URL}/api/products/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {

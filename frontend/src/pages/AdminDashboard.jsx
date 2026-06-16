@@ -41,7 +41,8 @@ const AdminDashboard = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        const res = await fetch(`/api/products/${id}`, {
+        const API_URL = import.meta.env.VITE_API_URL || '';
+        const res = await fetch(`${API_URL}/api/products/${id}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${userInfo.token}`,
@@ -80,8 +81,9 @@ const AdminDashboard = () => {
     };
 
     try {
+      const API_URL = import.meta.env.VITE_API_URL || '';
       if (isEditing) {
-        await fetch(`/api/products/${formData.id}`, {
+        await fetch(`${API_URL}/api/products/${formData.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -90,7 +92,7 @@ const AdminDashboard = () => {
           body: JSON.stringify(formattedProduct),
         });
       } else {
-        await fetch('/api/products', {
+        await fetch(`${API_URL}/api/products`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
