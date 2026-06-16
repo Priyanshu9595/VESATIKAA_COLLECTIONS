@@ -1,9 +1,28 @@
-import { useState } from 'react';
-import { EnvelopeSimple, Phone, MapPin } from '@phosphor-icons/react';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { EnvelopeSimple, Phone, MapPin, LockKey } from '@phosphor-icons/react';
 
 const Contact = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const { userInfo } = useSelector((state) => state.auth);
+
+  const [formData, setFormData] = useState({ 
+    name: userInfo?.name || '', 
+    email: userInfo?.email || '', 
+    subject: '', 
+    message: '' 
+  });
   const [status, setStatus] = useState({ type: '', message: '' });
+
+  useEffect(() => {
+    if (userInfo) {
+      setFormData(prev => ({
+        ...prev,
+        name: userInfo.name || prev.name,
+        email: userInfo.email || prev.email
+      }));
+    }
+  }, [userInfo]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -102,7 +121,17 @@ const Contact = () => {
                 </div>
               )}
 
-              <form className="space-y-5" onSubmit={handleSubmit}>
+              {!userInfo ? (
+                <div className="bg-bg-secondary p-8 rounded-sm text-center border border-border-light">
+                  <LockKey size={48} className="mx-auto text-text-secondary mb-4" />
+                  <h3 className="text-xl font-serif text-primary mb-2">Authentication Required</h3>
+                  <p className="text-text-secondary mb-6">Please log in to your account to send us an inquiry.</p>
+                  <Link to="/auth?redirect=/contact" className="inline-block bg-primary text-white py-3 px-8 rounded-sm font-medium transition-colors hover:bg-accent tracking-wider">
+                    Sign In to Continue
+                  </Link>
+                </div>
+              ) : (
+                <form className="space-y-5" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label htmlFor="name" className="block text-sm text-text-secondary mb-1">Full Name</label>
@@ -170,6 +199,7 @@ const Contact = () => {
                   {status.type === 'loading' ? 'Sending...' : 'Send Message'}
                 </button>
               </form>
+              )}
             </div>
           </div>
         </div>
