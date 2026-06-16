@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1a1a1a;
+  --color-secondary: #666666;
+  --color-accent: #d4af37;
+  --color-accent-hover: #c5a028;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9f9f9;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-border-light: #e5e5e5;
+  --color-success: #2e7d32;
+  --color-error: #d32f2f;
+  
+  --font-family-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-family-serif: "Playfair Display", Georgia, serif;
+}
+
+/* Global Styles */
+body {
+  @apply bg-bg-primary text-text-primary font-sans m-0 p-0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-serif font-semibold;
+}
+
+/* Base Utility Classes to support migration */
+.container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.btn-primary {
+  @apply bg-primary text-white py-2 px-6 rounded-sm font-medium transition-colors hover:bg-accent hover:text-white disabled:opacity-50;
+}
+
+.btn-secondary {
+  @apply bg-transparent border border-primary text-primary py-2 px-6 rounded-sm font-medium transition-colors hover:bg-primary hover:text-white disabled:opacity-50;
+}
+
+.card {
+  @apply bg-white rounded-md shadow-sm border border-border-light overflow-hidden transition-shadow hover:shadow-md;
+}
+
+.input-field {
+  @apply w-full p-3 border border-border-light rounded-sm focus:outline-none focus:border-accent transition-colors;
+}
+
+/* Existing component CSS overrides that aren't fully migrated yet */
+.logo {
+  @apply font-serif text-2xl font-bold tracking-wider text-primary no-underline;
+}
+
+.logo span {
+  @apply text-accent font-normal;
+}
